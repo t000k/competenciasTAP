@@ -1,0 +1,8 @@
+.root{
+    -fx-background-image: url("../images/fondo.jpg"), url("../images/logoitcelaya.png");
+    -fx-background-size: 100%,200px;
+    -fx-background-position: center;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: center,bottom right;
+
+}

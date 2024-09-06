@@ -1,0 +1,15 @@
+.button{
+    -fx-background-color: #2e2b2f;
+    -fx-background-radius: 20;
+    -fx-text-fill: #f2f2f3;
+    -fx-border-color: #494444;
+    -fx-border-radius: 15;
+    -fx-padding: 10 10 10 10; /*Ordena de la forma TOP,RIGHT.BOTTOM,LEFT*/
+}
+
+/*Al colocar un # es un selector especifico*/
+#font-button {
+
+    -fx-font: bold italic 20pt "Monospaced";
+    -fx-effect: dropshadow(one-pass-box, #1e1b1b,8,0.0,2,0);
+}
