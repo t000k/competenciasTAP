@@ -61,8 +61,8 @@ public class HelloApplication extends Application {
         // Crear layout principal
         vBox = new VBox(menuBar);
 
-        // Cargar la imagen de fondo
-        Image backgroundImage = new Image("C:\\Users\\cisne\\IdeaProjects\\TAP2024b\\src\\main\\resources\\images\\fondo.jpg"); // Ruta de la imagen
+        // Cargar la imagen de fondo desde el classpath
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/images/fondo.jpg")); // Ruta de la imagen dentro de resources
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,
                 BackgroundRepeat.NO_REPEAT,
@@ -78,6 +78,15 @@ public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) {
         CreateUI();
+
+        // Establecer el ícono de la aplicación desde el classpath
+        try {
+            Image icon = new Image(getClass().getResourceAsStream("/images/logoitcelaya.png"));
+            stage.getIcons().add(icon);
+        } catch (NullPointerException e) {
+            System.out.println("El ícono no se pudo cargar: " + e.getMessage());
+        }
+
         Scene scene = new Scene(vBox, 320, 240);
         stage.setTitle("Hello!");
         stage.setScene(scene);
