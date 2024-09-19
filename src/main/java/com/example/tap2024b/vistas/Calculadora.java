@@ -34,7 +34,7 @@ public class Calculadora extends Stage {
         btnClear = new Button("CE"); // Botón de limpiar pantalla
         btnClear.setOnAction(event -> reiniciarCalculadora()); // Acción para limpiar la pantalla cuando se presiona el botón
         vBox = new VBox(txtPantalla, gdpTeclado, btnClear); // Contenedor que agrupa la pantalla, el teclado y el botón Clear
-        btnClear.setId("font-button"); // Estilo del botón Clear (si hay estilos CSS)
+        btnClear.setId("font-button"); // Estilo del botón Clear
         escena = new Scene(vBox, 300, 300); // Creación de la escena de la calculadora
         escena.getStylesheets().add(getClass().getResource("/styles/cal.css").toString()); // Estilos externos
     }
