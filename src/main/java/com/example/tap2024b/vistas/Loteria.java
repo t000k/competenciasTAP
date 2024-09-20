@@ -157,7 +157,7 @@ public class Loteria extends Stage {
     private void iniciarJuego() {
         timeline.play(); // Inicia el temporizador
 
-        Timeline timelineCartas = new Timeline(new KeyFrame(Duration.seconds(3), ev -> {
+        Timeline timelineCartas = new Timeline(new KeyFrame(Duration.seconds(0.1), ev -> {
             mostrarSiguienteCarta();
         }));
         timelineCartas.setCycleCount(mazo.size());

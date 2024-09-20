@@ -96,6 +96,13 @@ public class Calculadora extends Stage {
             return;
         }
 
+        // Si se permite el operador "-" como número negativo al inicio o después de un operador
+        if (operador.equals("-") && (txtPantalla.getText().equals("0") || txtPantalla.getText().endsWith(" "))) {
+            txtPantalla.appendText(operador); // Permitir agregar "-" como parte de un número negativo
+            esperandoOperador = true;
+            return;
+        }
+
         // Si no hay operador previo, agregar el operador
         if (!text.endsWith(" ") && !text.equals("Error")) {
             txtPantalla.appendText(" " + operador + " ");
