@@ -3,11 +3,13 @@ package com.example.tap2024b;
 import com.example.tap2024b.vistas.Calculadora;
 import com.example.tap2024b.vistas.Loteria;
 import javafx.application.Application;
+import javafx.geometry.Pos; // Importar Pos
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
@@ -17,6 +19,7 @@ public class HelloApplication extends Application {
     private Menu menuCompetencias;
     private MenuItem menuItemCalculadora;
     private MenuItem menuItemLoteria;
+    private StackPane stackPane; // Cambiar VBox a StackPane
     private VBox vBox;
 
     public void CreateUI() {
@@ -63,16 +66,36 @@ public class HelloApplication extends Application {
 
         // Cargar la imagen de fondo desde el classpath
         Image backgroundImage = new Image(getClass().getResourceAsStream("/images/fondo.jpg")); // Ruta de la imagen dentro de resources
+
+        // Crear un tamaño de fondo que cubra todo el VBox
+        BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, false, true);
+
         BackgroundImage background = new BackgroundImage(
                 backgroundImage,
                 BackgroundRepeat.NO_REPEAT,
                 BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.DEFAULT,
-                new BackgroundSize(BackgroundSize.AUTO, BackgroundSize.AUTO, false, false, true, false)
+                BackgroundPosition.CENTER,
+                backgroundSize
         );
 
         // Asignar la imagen de fondo al VBox
         vBox.setBackground(new Background(background));
+
+        // Crear el StackPane y añadir el VBox
+        stackPane = new StackPane(vBox);
+
+        // Cargar la imagen pequeña
+        Image smallImage = new Image(getClass().getResourceAsStream("/images/tec.png")); // Ruta de la imagen pequeña
+        ImageView imageView = new ImageView(smallImage);
+
+        // Ajustar el tamaño de la imagen si es necesario
+        imageView.setFitWidth(200); // Establecer el ancho
+        imageView.setFitHeight(200); // Establecer la altura
+        imageView.setPreserveRatio(true); // Mantener la proporción
+
+        // Añadir la imagen pequeña al StackPane
+        stackPane.getChildren().add(imageView);
+        StackPane.setAlignment(imageView, Pos.CENTER); // Alinear la imagen en la parte superior
     }
 
     @Override
@@ -87,7 +110,7 @@ public class HelloApplication extends Application {
             System.out.println("El ícono no se pudo cargar: " + e.getMessage());
         }
 
-        Scene scene = new Scene(vBox, 320, 240);
+        Scene scene = new Scene(stackPane, 320, 240);
         stage.setTitle("Hello!");
         stage.setScene(scene);
         stage.setMaximized(true);
