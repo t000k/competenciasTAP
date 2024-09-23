@@ -85,7 +85,7 @@ public class Loteria extends Stage {
         lblTimer = new Label("00:00");
         lblTimer.setStyle("-fx-font-size: 30; -fx-text-fill: #eee4e4;"); // Cambia el tamaño y color
         lblVictoria = new Label();
-        lblVictoria.setStyle("-fx-font-size: 24; -fx-text-fill: green;");
+        lblVictoria.setStyle("-fx-font-size: 24; -fx-text-fill: #d5ba15;");
         imvMazo = new ImageView(new Image(getClass().getResource("/images/dorso.jpeg").toString()));
         imvMazo.setFitHeight(450);
         imvMazo.setFitWidth(300);
