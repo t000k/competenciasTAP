@@ -1,5 +1,6 @@
 package com.example.tap2024b.vistas;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,26 +15,30 @@ import org.kordamp.bootstrapfx.BootstrapFX;
 import org.kordamp.bootstrapfx.scene.layout.Panel;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Loteria extends Stage {
 
     private HBox hBoxMain, hBoxButtons;
     private VBox vbxTablilla, vbxMazo;
     private Button btnAnterior, btnSiguiente, btnIniciar;
-    private Label lblTimer;
+    private Label lblTimer, lblVictoria;
     private GridPane gdpTablilla;
     private ImageView imvMazo;
     private Scene escena;
-    private List<String[]> tableros; // Lista de tableros con diferentes combinaciones
-    private int currentTablero = 0; // Indica el tablero actual
+    private List<String[]> tableros;
+    private int currentTablero = 0;
     private Button[][] arBtnTab;
 
     private Panel pnlPrincipal;
+    private List<String> mazoCartas;
+    private int currentCartaIndex = 0;
+    private boolean juegoIniciado = false;
+    private long tiempoInicio;
 
     public Loteria() {
-        CrearTableros(); // Inicializar los tableros
+        CrearTableros();
+        CrearMazoCartas();
         CrearUI();
         this.setTitle("Loteria Mexicana :)");
         this.setScene(escena);
@@ -54,11 +59,11 @@ public class Loteria extends Stage {
 
         btnAnterior = new Button();
         btnAnterior.setGraphic(imvAnt);
-        btnAnterior.setOnAction(e -> CambiarTablero(-1)); // Acción para cambiar al tablero anterior
+        btnAnterior.setOnAction(e -> CambiarTablero(-1));
 
         btnSiguiente = new Button();
         btnSiguiente.setGraphic(imvSig);
-        btnSiguiente.setOnAction(e -> CambiarTablero(1)); // Acción para cambiar al siguiente tablero
+        btnSiguiente.setOnAction(e -> CambiarTablero(1));
 
         hBoxButtons = new HBox(btnAnterior, btnSiguiente);
         vbxTablilla = new VBox(gdpTablilla, hBoxButtons);
@@ -78,46 +83,71 @@ public class Loteria extends Stage {
 
     private void CrearMazo() {
         lblTimer = new Label("00:00");
+        lblTimer.setStyle("-fx-font-size: 30; -fx-text-fill: #eee4e4;"); // Cambia el tamaño y color
+        lblVictoria = new Label();
+        lblVictoria.setStyle("-fx-font-size: 24; -fx-text-fill: green;");
         imvMazo = new ImageView(new Image(getClass().getResource("/images/dorso.jpeg").toString()));
         imvMazo.setFitHeight(450);
         imvMazo.setFitWidth(300);
         btnIniciar = new Button("Iniciar Juego");
         btnIniciar.getStyleClass().setAll("btn-sm", "btn-danger");
-        vbxMazo = new VBox(lblTimer, imvMazo, btnIniciar);
+        vbxMazo = new VBox(lblTimer, imvMazo, btnIniciar, lblVictoria);
         vbxMazo.setSpacing(10);
+        btnIniciar.setOnAction(e -> iniciarJuego());
     }
 
     private void CrearTablilla() {
         arBtnTab = new Button[4][4];
-        ActualizarTablilla(); // Llena la tablilla con imágenes
+        ActualizarTablilla();
     }
 
-    // Cambiar el tablero de lotería según la dirección (1 para siguiente, -1 para anterior)
     private void CambiarTablero(int direccion) {
         currentTablero = (currentTablero + direccion + tableros.size()) % tableros.size();
         ActualizarTablilla();
     }
 
-    // Actualizar la tablilla con imágenes del tablero actual
     private void ActualizarTablilla() {
-        gdpTablilla.getChildren().clear(); // Limpiar el gridpane
+        gdpTablilla.getChildren().clear();
         String[] tableroActual = tableros.get(currentTablero);
         Image img;
         ImageView imv;
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
-                img = cargarImagen(tableroActual[(i * 4 + j) % tableroActual.length]);
+                String nombreCarta = tableroActual[(i * 4 + j) % tableroActual.length];
+                img = cargarImagen(nombreCarta);
                 imv = new ImageView(img);
                 imv.setFitWidth(70);
                 imv.setFitHeight(120);
                 arBtnTab[j][i] = new Button();
                 arBtnTab[j][i].setGraphic(imv);
+
+                final String nombreCartaFinal = nombreCarta;
+                int finalJ = j;
+                int finalI = i;
+                arBtnTab[j][i].setOnAction(e -> seleccionarCarta(arBtnTab[finalJ][finalI], nombreCartaFinal));
+
                 gdpTablilla.add(arBtnTab[j][i], j, i);
             }
         }
     }
 
-    // Cargar la imagen, probando diferentes extensiones de archivo
+    private void seleccionarCarta(Button btn, String nombreCarta) {
+        System.out.println("Carta seleccionada: " + nombreCarta);
+        btn.setDisable(true);
+        verificarVictoria();
+    }
+
+    private void verificarVictoria() {
+        for (Button[] fila : arBtnTab) {
+            for (Button btn : fila) {
+                if (!btn.isDisabled()) {
+                    return; // Aún hay cartas sin seleccionar
+                }
+            }
+        }
+        lblVictoria.setText("¡Victoria, has ganado el juego!!!");
+    }
+
     private Image cargarImagen(String nombre) {
         String[] extensiones = {".png", ".jpg", ".jpeg"};
         for (String extension : extensiones) {
@@ -126,11 +156,9 @@ public class Loteria extends Stage {
                 return new Image(is);
             }
         }
-        // Si no se encuentra la imagen en ningún formato, devuelve una imagen por defecto
         return new Image(getClass().getResource("/images/default.png").toString());
     }
 
-    // Crear los diferentes tableros con combinaciones de cartas
     private void CrearTableros() {
         tableros = new ArrayList<>();
         tableros.add(new String[]{"pescado", "musico", "valiente", "calavera", "negrito", "paraguas", "chalupa", "sandia",
@@ -143,5 +171,46 @@ public class Loteria extends Stage {
                 "cazo", "diablito", "cantarito", "jaras", "palma", "arana", "bota", "escalera"});
         tableros.add(new String[]{"muerte", "cotorro", "luna", "nopal", "pera", "bandolón", "maceta", "camaron",
                 "mano", "pajaro", "garza", "estrella", "pescado", "musico", "valiente", "calavera"});
+    }
+
+    private void CrearMazoCartas() {
+        mazoCartas = new ArrayList<>();
+        mazoCartas.addAll(Arrays.asList("pescado", "musico", "valiente", "calavera", "negrito", "paraguas", "chalupa", "sandia",
+                "rana", "barril", "arpa", "cotorro", "botella", "violoncello", "corona", "árbol", "alacran", "apache",
+                "cazo", "diablito", "cantarito", "jaras", "palma", "arana", "bota", "escalera", "muerte", "luna", "nopal",
+                "pera", "bandolón", "maceta", "camaron", "mano", "pajaro", "garza", "estrella"));
+        Collections.shuffle(mazoCartas);
+    }
+
+    private void iniciarJuego() {
+        if (!juegoIniciado) {
+            juegoIniciado = true;
+            tiempoInicio = System.currentTimeMillis();
+            lblVictoria.setText(""); // Resetear mensaje de victoria
+            currentCartaIndex = 0;
+
+            new Thread(() -> {
+                while (currentCartaIndex < mazoCartas.size()) {
+                    try {
+                        Thread.sleep(4000); // Cambiar carta cada 4 segundos
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    String nombreCarta = mazoCartas.get(currentCartaIndex);
+                    Image imgCarta = cargarImagen(nombreCarta);
+                    Platform.runLater(() -> imvMazo.setImage(imgCarta));
+                    currentCartaIndex++;
+                    actualizarTiempoTranscurrido();
+                }
+                Platform.runLater(() -> lblVictoria.setText("Juego terminado"));
+            }).start();
+        }
+    }
+
+    private void actualizarTiempoTranscurrido() {
+        long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;
+        long segundos = (tiempoTranscurrido / 1000) % 60;
+        long minutos = (tiempoTranscurrido / (1000 * 60)) % 60;
+        Platform.runLater(() -> lblTimer.setText(String.format("%02d:%02d", minutos, segundos)));
     }
 }
