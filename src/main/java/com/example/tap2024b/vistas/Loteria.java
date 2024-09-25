@@ -32,6 +32,7 @@ public class Loteria extends Stage {
 
     private Panel pnlPrincipal;
     private List<String> mazoCartas;
+    private Set<String> cartasMostradas; // Cartas que ya han aparecido en el mazo
     private int currentCartaIndex = 0;
     private boolean juegoIniciado = false;
     private long tiempoInicio;
@@ -83,9 +84,10 @@ public class Loteria extends Stage {
 
     private void CrearMazo() {
         lblTimer = new Label("00:00");
-        lblTimer.setStyle("-fx-font-size: 30; -fx-text-fill: #eee4e4;"); // Cambia el tamaño y color
+        lblTimer.setStyle("-fx-font-size: 30px; -fx-text-fill: #fafafa;");
+
         lblVictoria = new Label();
-        lblVictoria.setStyle("-fx-font-size: 24; -fx-text-fill: #d5ba15;");
+        lblVictoria.setStyle("-fx-font-size: 24; -fx-text-fill: #d0de15;");
         imvMazo = new ImageView(new Image(getClass().getResource("/images/dorso.jpeg").toString()));
         imvMazo.setFitHeight(450);
         imvMazo.setFitWidth(300);
@@ -132,9 +134,14 @@ public class Loteria extends Stage {
     }
 
     private void seleccionarCarta(Button btn, String nombreCarta) {
-        System.out.println("Carta seleccionada: " + nombreCarta);
-        btn.setDisable(true);
-        verificarVictoria();
+        // Verificar si la carta ya ha aparecido en el mazo
+        if (cartasMostradas.contains(nombreCarta)) {
+            System.out.println("Carta seleccionada: " + nombreCarta);
+            btn.setDisable(true);
+            verificarVictoria();
+        } else {
+            System.out.println("Carta seleccionada NO ha aparecido en el mazo: " + nombreCarta);
+        }
     }
 
     private void verificarVictoria() {
@@ -145,7 +152,7 @@ public class Loteria extends Stage {
                 }
             }
         }
-        lblVictoria.setText("¡Victoria, has ganado el juego!!!");
+        lblVictoria.setText("¡Victoria  has sido ganador!!!");
     }
 
     private Image cargarImagen(String nombre) {
@@ -175,18 +182,21 @@ public class Loteria extends Stage {
 
     private void CrearMazoCartas() {
         mazoCartas = new ArrayList<>();
+        cartasMostradas = new HashSet<>(); // Inicializamos el conjunto de cartas mostradas
         mazoCartas.addAll(Arrays.asList("pescado", "musico", "valiente", "calavera", "negrito", "paraguas", "chalupa", "sandia",
                 "rana", "barril", "arpa", "cotorro", "botella", "violoncello", "corona", "árbol", "alacran", "apache",
-                "cazo", "diablito", "cantarito", "jaras", "palma", "arana", "bota", "escalera", "muerte", "luna", "nopal",
-                "pera", "bandolón", "maceta", "camaron", "mano", "pajaro", "garza", "estrella"));
+                "cazo", "diablito", "cantarito", "jaras", "palma", "arana", "bota", "escalera", "muerte", "cotorro", "luna",
+                "nopal", "pera", "bandolón", "maceta", "camaron", "mano", "pajaro", "garza", "estrella"));
         Collections.shuffle(mazoCartas);
     }
 
     private void iniciarJuego() {
         if (!juegoIniciado) {
             juegoIniciado = true;
+            btnAnterior.setDisable(true);
+            btnSiguiente.setDisable(true);
+            btnIniciar.setDisable(true);
             tiempoInicio = System.currentTimeMillis();
-            lblVictoria.setText(""); // Resetear mensaje de victoria
             currentCartaIndex = 0;
 
             new Thread(() -> {
@@ -197,6 +207,7 @@ public class Loteria extends Stage {
                         e.printStackTrace();
                     }
                     String nombreCarta = mazoCartas.get(currentCartaIndex);
+                    cartasMostradas.add(nombreCarta); // Añadir carta al conjunto de cartas mostradas
                     Image imgCarta = cargarImagen(nombreCarta);
                     Platform.runLater(() -> imvMazo.setImage(imgCarta));
                     currentCartaIndex++;
