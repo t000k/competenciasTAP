@@ -3,6 +3,7 @@ package com.example.tap2024b;
 import com.example.tap2024b.models.Conexion;
 import com.example.tap2024b.vistas.Calculadora;
 import com.example.tap2024b.vistas.Loteria;
+import com.example.tap2024b.vistas.UsuariosInterface; // Asegúrate de importar UsuariosInterface
 import javafx.application.Application;
 import javafx.geometry.Pos; // Importar Pos
 import javafx.scene.Scene;
@@ -20,6 +21,7 @@ public class HelloApplication extends Application {
     private Menu menuCompetencias;
     private MenuItem menuItemCalculadora;
     private MenuItem menuItemLoteria;
+    private MenuItem menuItemUsuarios; // Añadir la variable para el menú de Usuarios
     private StackPane stackPane; // Cambiar VBox a StackPane
     private VBox vBox;
 
@@ -30,11 +32,17 @@ public class HelloApplication extends Application {
         // Crear menú "Competencias"
         menuCompetencias = new Menu("Competencias");
 
-        // Crear item "Calculadora" dentro del menú "Competencias"
+        // Crear ítem "Calculadora" dentro del menú "Competencias"
         menuItemCalculadora = new MenuItem("Calculadora");
 
-        // Crear item "Loteria" dentro del menú "Competencias"
+        // Crear ítem "Lotería" dentro del menú "Competencias"
         menuItemLoteria = new MenuItem("Loteria");
+
+        // Crear ítem "Usuarios" dentro del menú "Competencias"
+        menuItemUsuarios = new MenuItem("Usuarios"); // Crear el ítem Usuarios
+        menuItemUsuarios.setOnAction(event -> {
+            new UsuariosInterface(); // Abrir la interfaz de usuarios
+        });
 
         // Añadir acción para abrir la calculadora
         menuItemCalculadora.setOnAction(event -> {
@@ -47,19 +55,19 @@ public class HelloApplication extends Application {
             }
         });
 
-        // Añadir acción para abrir la Loteria
+        // Añadir acción para abrir la Lotería
         menuItemLoteria.setOnAction(event -> {
             try {
                 Loteria loteria = new Loteria();
                 Stage loteriaStage = new Stage();
-                loteria.show(); // Inicia la ventana de la Loteria
+                loteria.show(); // Inicia la ventana de la Lotería
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
         // Añadir los ítems al menú "Competencias"
-        menuCompetencias.getItems().addAll(menuItemCalculadora, menuItemLoteria);
+        menuCompetencias.getItems().addAll(menuItemCalculadora, menuItemLoteria, menuItemUsuarios); // Añadir Usuarios
         menuBar.getMenus().add(menuCompetencias);
 
         // Crear layout principal
@@ -120,6 +128,5 @@ public class HelloApplication extends Application {
 
     public static void main(String[] args) {
         launch();
-
     }
 }
