@@ -8,10 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClienteDAO {
-    private int idCte;
-    private String nomCte;
-    private String telCte;
-    private String emailCte;
+    // Atributos privados para los datos del cliente
+    private int idCte;         // Identificador del cliente
+    private String nomCte;     // Nombre del cliente
+    private String telCte;     // Teléfono del cliente
+    private String emailCte;   // Correo electrónico del cliente
+
+    // Métodos getter y setter para acceder y modificar los atributos privados
 
     public int getIdCte() {
         return idCte;
@@ -45,31 +48,34 @@ public class ClienteDAO {
         this.emailCte = emailCte;
     }
 
-    // Método para insertar un nuevo cliente
+    // Método para insertar un nuevo cliente en la base de datos
     public void INSERT() {
         String query = "INSERT INTO tbcliente(nomCte, telCte, emailCte) VALUES (?, ?, ?)";
         Connection conn = null;
 
         try {
-            // Crear la conexión si no está ya creada
+            // Si la conexión aún no está establecida, se crea una nueva conexión
             if (Conexion.connection == null) {
                 Conexion.CrearConexion();
             }
-            conn = Conexion.connection;
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, this.nomCte);
-            pstmt.setString(2, this.telCte);
-            pstmt.setString(3, this.emailCte);
+            conn = Conexion.connection;   // Se obtiene la conexión actual
+            PreparedStatement pstmt = conn.prepareStatement(query);   // Se prepara la consulta SQL
+            pstmt.setString(1, this.nomCte);  // Se establecen los valores en la consulta: nombre del cliente
+            pstmt.setString(2, this.telCte);  // Teléfono del cliente
+            pstmt.setString(3, this.emailCte); // Correo electrónico del cliente
 
-            pstmt.executeUpdate();
-            pstmt.close();
-            System.out.println("Cliente insertado exitosamente.");
+            pstmt.executeUpdate();   // Se ejecuta la inserción en la base de datos
+            pstmt.close();   // Se cierra el PreparedStatement
+            //System.out.println("Cliente insertado exitosamente.");
+            System.out.println("\033[0;32mCliente insertado exitosamente.\033[0m");
+
         } catch (Exception e) {
+            // Si ocurre un error, se imprime el error en la consola
             e.printStackTrace();
         }
     }
 
-    // Método para actualizar un cliente existente
+    // Método para actualizar los datos de un cliente existente en la base de datos
     public void UPDATE() {
         String query = "UPDATE tbcliente SET nomCte = ?, telCte = ?, emailCte = ? WHERE idCte = ?";
         Connection conn = null;
@@ -80,20 +86,22 @@ public class ClienteDAO {
             }
             conn = Conexion.connection;
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, this.nomCte);
-            pstmt.setString(2, this.telCte);
-            pstmt.setString(3, this.emailCte);
-            pstmt.setInt(4, this.idCte);
+            pstmt.setString(1, this.nomCte);  // Establecer nuevo nombre del cliente
+            pstmt.setString(2, this.telCte);  // Establecer nuevo teléfono del cliente
+            pstmt.setString(3, this.emailCte);  // Establecer nuevo correo del cliente
+            pstmt.setInt(4, this.idCte);  // Establecer el ID del cliente a actualizar
 
-            pstmt.executeUpdate();
+            pstmt.executeUpdate();   // Ejecutar la actualización
             pstmt.close();
-            System.out.println("Cliente actualizado exitosamente.");
+            //System.out.println("Cliente actualizado exitosamente.");
+            System.out.println("\033[0;34mCliente actualizado exitosamente.\033[0m");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Método para eliminar un cliente
+    // Método para eliminar un cliente de la base de datos
     public void DELETE() {
         String query = "DELETE FROM tbcliente WHERE idCte = ?";
         Connection conn = null;
@@ -104,11 +112,13 @@ public class ClienteDAO {
             }
             conn = Conexion.connection;
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, this.idCte);
+            pstmt.setInt(1, this.idCte);  // Establecer el ID del cliente a eliminar
 
-            pstmt.executeUpdate();
+            pstmt.executeUpdate();   // Ejecutar la eliminación
             pstmt.close();
-            System.out.println("Cliente eliminado exitosamente.");
+            //System.out.println("Cliente eliminado exitosamente.");
+            System.out.println("\033[0;31mCliente eliminado exitosamente.\033[0m");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,7 +127,7 @@ public class ClienteDAO {
     // Método para obtener un cliente específico por su ID
     public ClienteDAO SELECT(int idCte) {
         String query = "SELECT * FROM tbcliente WHERE idCte = ?";
-        ClienteDAO cliente = null;
+        ClienteDAO cliente = null;   // Objeto cliente donde se almacenarán los datos
         Connection conn = null;
 
         try {
@@ -126,30 +136,30 @@ public class ClienteDAO {
             }
             conn = Conexion.connection;
             PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setInt(1, idCte);
+            pstmt.setInt(1, idCte);   // Establecer el ID del cliente a buscar
 
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                cliente = new ClienteDAO();
+            ResultSet rs = pstmt.executeQuery();   // Ejecutar la consulta
+            if (rs.next()) {   // Si se encuentra un cliente con el ID proporcionado
+                cliente = new ClienteDAO();   // Crear un nuevo objeto ClienteDAO con los datos obtenidos
                 cliente.setIdCte(rs.getInt("idCte"));
                 cliente.setNomCte(rs.getString("nomCte"));
                 cliente.setTelCte(rs.getString("telCte"));
                 cliente.setEmailCte(rs.getString("emailCte"));
             }
 
-            rs.close();
-            pstmt.close();
+            rs.close();   // Cerrar el ResultSet
+            pstmt.close();   // Cerrar el PreparedStatement
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return cliente;
+        return cliente;   // Retornar el cliente encontrado o null si no existe
     }
 
-    // Método para obtener todos los clientes
+    // Método para obtener una lista de todos los clientes en la base de datos
     public List<ClienteDAO> SELECT_ALL() {
         String query = "SELECT * FROM tbcliente";
-        List<ClienteDAO> clientes = new ArrayList<>();
+        List<ClienteDAO> clientes = new ArrayList<>();  // Lista donde se almacenarán todos los clientes
         Connection conn = null;
 
         try {
@@ -157,24 +167,25 @@ public class ClienteDAO {
                 Conexion.CrearConexion();
             }
             conn = Conexion.connection;
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(query);
+            Statement stmt = conn.createStatement();   // Crear un Statement para ejecutar la consulta
+            ResultSet rs = stmt.executeQuery(query);   // Ejecutar la consulta
 
+            // Iterar sobre el resultado y agregar cada cliente a la lista
             while (rs.next()) {
                 ClienteDAO cliente = new ClienteDAO();
                 cliente.setIdCte(rs.getInt("idCte"));
                 cliente.setNomCte(rs.getString("nomCte"));
                 cliente.setTelCte(rs.getString("telCte"));
                 cliente.setEmailCte(rs.getString("emailCte"));
-                clientes.add(cliente);
+                clientes.add(cliente);   // Agregar el cliente a la lista
             }
 
-            rs.close();
-            stmt.close();
+            rs.close();   // Cerrar el ResultSet
+            stmt.close();   // Cerrar el Statement
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return clientes;
+        return clientes;   // Retornar la lista de clientes
     }
 }

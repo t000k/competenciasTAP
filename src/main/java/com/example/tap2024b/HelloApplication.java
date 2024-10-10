@@ -3,9 +3,10 @@ package com.example.tap2024b;
 import com.example.tap2024b.models.Conexion;
 import com.example.tap2024b.vistas.Calculadora;
 import com.example.tap2024b.vistas.Loteria;
-import com.example.tap2024b.vistas.UsuariosInterface; // Asegúrate de importar UsuariosInterface
+import com.example.tap2024b.vistas.UsuariosInterface;
+import com.example.tap2024b.vistas.MinesweeperApp; // Importar MinesweeperApp
 import javafx.application.Application;
-import javafx.geometry.Pos; // Importar Pos
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
@@ -21,8 +22,9 @@ public class HelloApplication extends Application {
     private Menu menuCompetencias;
     private MenuItem menuItemCalculadora;
     private MenuItem menuItemLoteria;
-    private MenuItem menuItemUsuarios; // Añadir la variable para el menú de Usuarios
-    private StackPane stackPane; // Cambiar VBox a StackPane
+    private MenuItem menuItemUsuarios;
+    private MenuItem menuItemMinesweeper; // Cambiado a MinesweeperApp
+    private StackPane stackPane;
     private VBox vBox;
 
     public void CreateUI() {
@@ -32,24 +34,18 @@ public class HelloApplication extends Application {
         // Crear menú "Competencias"
         menuCompetencias = new Menu("Competencias");
 
-        // Crear ítem "Calculadora" dentro del menú "Competencias"
+        // Crear ítems dentro del menú "Competencias"
         menuItemCalculadora = new MenuItem("Calculadora");
-
-        // Crear ítem "Lotería" dentro del menú "Competencias"
         menuItemLoteria = new MenuItem("Loteria");
-
-        // Crear ítem "Usuarios" dentro del menú "Competencias"
-        menuItemUsuarios = new MenuItem("Usuarios"); // Crear el ítem Usuarios
-        menuItemUsuarios.setOnAction(event -> {
-            new UsuariosInterface(); // Abrir la interfaz de usuarios
-        });
+        menuItemUsuarios = new MenuItem("Usuarios");
+        menuItemMinesweeper = new MenuItem("Minesweeper"); // Crear el ítem MinesweeperApp
 
         // Añadir acción para abrir la calculadora
         menuItemCalculadora.setOnAction(event -> {
             try {
                 Calculadora calculadora = new Calculadora();
                 Stage calculadoraStage = new Stage();
-                calculadora.show(); // Inicia la ventana de la calculadora
+                calculadora.show();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -60,58 +56,55 @@ public class HelloApplication extends Application {
             try {
                 Loteria loteria = new Loteria();
                 Stage loteriaStage = new Stage();
-                loteria.show(); // Inicia la ventana de la Lotería
+                loteria.show();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        // Añadir acción para abrir Usuarios
+        menuItemUsuarios.setOnAction(event -> new UsuariosInterface());
+
+        // Añadir acción para abrir Minesweeper
+        menuItemMinesweeper.setOnAction(event -> {
+            try {
+                MinesweeperApp minesweeperApp = new MinesweeperApp();
+                Stage minesweeperStage = new Stage();
+                minesweeperApp.show(); // Llamar al método show
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
         // Añadir los ítems al menú "Competencias"
-        menuCompetencias.getItems().addAll(menuItemCalculadora, menuItemLoteria, menuItemUsuarios); // Añadir Usuarios
+        menuCompetencias.getItems().addAll(menuItemCalculadora, menuItemLoteria, menuItemUsuarios, menuItemMinesweeper); // Añadir Minesweeper
         menuBar.getMenus().add(menuCompetencias);
 
         // Crear layout principal
         vBox = new VBox(menuBar);
 
-        // Cargar la imagen de fondo desde el classpath
-        Image backgroundImage = new Image(getClass().getResourceAsStream("/images/fondo.jpg")); // Ruta de la imagen dentro de resources
-
-        // Crear un tamaño de fondo que cubra todo el VBox
+        // Cargar la imagen de fondo
+        Image backgroundImage = new Image(getClass().getResourceAsStream("/images/fondo.jpg"));
         BackgroundSize backgroundSize = new BackgroundSize(100, 100, true, true, false, true);
-
-        BackgroundImage background = new BackgroundImage(
-                backgroundImage,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundRepeat.NO_REPEAT,
-                BackgroundPosition.CENTER,
-                backgroundSize
-        );
-
-        // Asignar la imagen de fondo al VBox
+        BackgroundImage background = new BackgroundImage(backgroundImage, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         vBox.setBackground(new Background(background));
 
         // Crear el StackPane y añadir el VBox
         stackPane = new StackPane(vBox);
 
         // Cargar la imagen pequeña
-        Image smallImage = new Image(getClass().getResourceAsStream("/images/tec.png")); // Ruta de la imagen pequeña
+        Image smallImage = new Image(getClass().getResourceAsStream("/images/tec.png"));
         ImageView imageView = new ImageView(smallImage);
-
-        // Ajustar el tamaño de la imagen si es necesario
-        imageView.setFitWidth(200); // Establecer el ancho
-        imageView.setFitHeight(200); // Establecer la altura
-        imageView.setPreserveRatio(true); // Mantener la proporción
-
-        // Añadir la imagen pequeña al StackPane
+        imageView.setFitWidth(200);
+        imageView.setFitHeight(200);
+        imageView.setPreserveRatio(true);
         stackPane.getChildren().add(imageView);
-        StackPane.setAlignment(imageView, Pos.CENTER); // Alinear la imagen en la parte superior
+        StackPane.setAlignment(imageView, Pos.CENTER);
     }
 
     @Override
     public void start(Stage stage) {
         CreateUI();
-
-        // Establecer el ícono de la aplicación desde el classpath
         try {
             Image icon = new Image(getClass().getResourceAsStream("/images/logoitcelaya.png"));
             stage.getIcons().add(icon);
